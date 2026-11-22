@@ -1,4 +1,4 @@
-# Simple and Clean local setup
+# A Local Terminal Setup That Just Works
 
 A clean, fast macOS terminal setup: **zsh + oh-my-zsh + Starship prompt + autocomplete + tmux (with persistence)**.
 The repo is safe to publish: it holds no secrets and no personal info. Anything private lives in two
