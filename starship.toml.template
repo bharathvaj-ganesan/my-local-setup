@@ -1,0 +1,19 @@
+# ~/.config/starship.toml  (template)
+# Starship works with no config at all; this keeps the prompt compact.
+
+add_newline = true
+command_timeout = 500
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[git_status]
+disabled = false
+
+[cmd_duration]
+min_time = 2000   # show duration for commands slower than 2s

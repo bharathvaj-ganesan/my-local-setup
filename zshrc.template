@@ -1,0 +1,59 @@
+# ~/.zshrc  (template)
+# Copy to ~/.zshrc and adjust the TODO items.
+# Never put tokens or passwords in this file. See README "Secrets".
+
+# --- Paths / env ---
+export PNPM_HOME="$HOME/Library/pnpm"
+export PYENV_ROOT="$HOME/.pyenv"
+export DENO_INSTALL="$HOME/.deno"
+# TODO: add JAVA_HOME or other SDK paths if you need them, e.g.
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/<your-jdk>/Contents/Home
+export PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PNPM_HOME/bin:$DENO_INSTALL/bin:$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+typeset -U path PATH  # dedupe
+
+# --- oh-my-zsh ---
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME=""                         # prompt is handled by starship (see bottom)
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+fpath+=~/.zfunc                      # must be before oh-my-zsh so its single compinit picks it up
+plugins=(
+  gitfast
+  zsh-autosuggestions                # needs: git clone into $ZSH/custom/plugins (see install.sh)
+  npm
+)
+source $ZSH/oh-my-zsh.sh
+
+# --- nvm (lazy-loaded to keep shell startup fast) ---
+export NVM_DIR="$HOME/.nvm"
+_nvm_lazy() {
+  unset -f nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+nvm() { _nvm_lazy; nvm "$@"; }
+
+# --- pyenv (shims on PATH above; full init lazy-loaded on first call) ---
+pyenv() { unset -f pyenv; eval "$(command pyenv init -)"; pyenv "$@"; }
+
+# --- Secrets: load from an untracked file, never inline ---
+# Create ~/.secrets (chmod 600) with lines like:  export MY_TOKEN="..."
+[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
+
+# --- Aliases ---
+alias pn=pnpm
+alias ll="ls -lah"
+# TODO: add your own project aliases here
+
+# Open a path in VS Code from the current directory
+code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+
+# --- Tool init ---
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# --- Prompt, navigation, fuzzy finder ---
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"            # use: z <folder>
+source <(fzf --zsh)                  # Ctrl+R fuzzy history, Ctrl+T file search
+
+# --- Syntax highlighting (must stay last) ---
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
