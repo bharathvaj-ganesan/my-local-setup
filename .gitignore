@@ -1,0 +1,10 @@
+# Never commit private files or backups
+.secrets
+.zshrc.local
+secrets/*
+!secrets/*.example
+*.bak
+*.bak-*
+.env
+.env.*
+.DS_Store

@@ -1,15 +1,20 @@
-# ~/.zshrc  (template)
-# Copy to ~/.zshrc and adjust the TODO items.
-# Never put tokens or passwords in this file. See README "Secrets".
+# ~/.zshrc  (shared, safe to commit)
+# Installed by install.sh. Do not put tokens, passwords or machine-specific
+# paths here. They belong in two private files that are NOT in git:
+#   ~/.secrets      API tokens and credentials (chmod 600)
+#   ~/.zshrc.local  machine/employer-specific PATH, SDKs and aliases
+# See README "Secrets and local overrides".
 
 # --- Paths / env ---
 export PNPM_HOME="$HOME/Library/pnpm"
 export PYENV_ROOT="$HOME/.pyenv"
 export DENO_INSTALL="$HOME/.deno"
-# TODO: add JAVA_HOME or other SDK paths if you need them, e.g.
-# export JAVA_HOME=/Library/Java/JavaVirtualMachines/<your-jdk>/Contents/Home
 export PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PNPM_HOME/bin:$DENO_INSTALL/bin:$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:$PATH"
-typeset -U path PATH  # dedupe
+
+# --- Private, untracked files (see header) ---
+[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+typeset -U path PATH  # dedupe (after local overrides)
 
 # --- oh-my-zsh ---
 export ZSH="$HOME/.oh-my-zsh"
@@ -35,14 +40,8 @@ nvm() { _nvm_lazy; nvm "$@"; }
 # --- pyenv (shims on PATH above; full init lazy-loaded on first call) ---
 pyenv() { unset -f pyenv; eval "$(command pyenv init -)"; pyenv "$@"; }
 
-# --- Secrets: load from an untracked file, never inline ---
-# Create ~/.secrets (chmod 600) with lines like:  export MY_TOKEN="..."
-[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
-
-# --- Aliases ---
+# --- Aliases (generic; project aliases go in ~/.zshrc.local) ---
 alias pn=pnpm
-alias ll="ls -lah"
-# TODO: add your own project aliases here
 
 # Open a path in VS Code from the current directory
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
